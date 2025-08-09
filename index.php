@@ -1,34 +1,25 @@
 <?php
-// مصفوفة المشاعر مع الرسائل
-$messages = [
-    "happy" => [
-        "الحمد لله الذي بنعمته تتم الصالحات 🌸",
-        "ابتسم، فالله يحب المتفائلين 😊"
-    ],
-    "sad" => [
-        "وَلَا تَهِنُوا وَلَا تَحْزَنُوا وَأَنتُمُ الْأَعْلَوْنَ إِن كُنتُم مُّؤْمِنِينَ 🌿",
-        "اصبر، فبعد العسر يأتي اليسر 💖"
-    ],
-    "angry" => [
-        "وَالْكَاظِمِينَ الْغَيْظَ وَالْعَافِينَ عَنِ النَّاسِ 🌿",
-        "اهدأ، فالغضب من الشيطان 🔥"
-    ],
-    "broken" => [
-        "إِنَّ مَعَ الْعُسْرِ يُسْرًا 🌸",
-        "الله معك ولن يتركك 🤍"
-    ]
-];
+require 'db.php';
 
 $result = "";
 
 // لو المستخدم ضغط على شعور
 if (isset($_POST['emotion'])) {
     $emotion = $_POST['emotion'];
-    if (isset($messages[$emotion])) {
-        // اختيار رسالة عشوائية من المصفوفة
-        $result = $messages[$emotion][array_rand($messages[$emotion])];
+
+    // جلب رسالة عشوائية من قاعدة البيانات
+    $sql = "SELECT message FROM messages WHERE emotion = ? ORDER BY RAND() LIMIT 1";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $emotion);
+    $stmt->execute();
+    $stmt->bind_result($message);
+    if ($stmt->fetch()) {
+        $result = $message;
     }
+    $stmt->close();
 }
+
+$conn->close();
 ?>
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
@@ -44,6 +35,10 @@ if (isset($_POST['emotion'])) {
         <button name="emotion" value="sad">😔 حزين</button>
         <button name="emotion" value="angry">😡 منفعل</button>
         <button name="emotion" value="broken">💔 محطم</button>
+        <button name="emotion" value="calm">😌 مطمئن</button>
+        <button name="emotion" value="grateful">🙏 ممتن</button>
+        <button name="emotion" value="motivated">🚀 متحمس</button>
+        <button name="emotion" value="anxious">😟 قلق</button>
     </form>
 
     <?php if ($result): ?>
