@@ -1,7 +1,7 @@
 <?php
 $host = "localhost";
-$user = "root"; // اسم المستخدم في XAMPP
-$pass = "";     // كلمة المرور غالبًا فاضية في XAMPP
+$user = "root"; 
+$pass = "";    
 $db   = "emotions_db";
 
 $conn = new mysqli($host, $user, $pass, $db);
